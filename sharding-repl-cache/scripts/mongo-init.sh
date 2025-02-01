@@ -24,7 +24,9 @@ rs.initiate(
   {
     _id: "shard1",
     members: [
-      { _id : 0, host : "shard1_1:27018" }
+      { _id : 0, host : "shard1_1:27018" },
+      { _id : 1, host : "shard1_2:27018" },	  
+      { _id : 2, host : "shard1_3:27018" }
     ]
   }
 );
@@ -40,7 +42,9 @@ rs.initiate(
   {
     _id: "shard2",
     members: [
-      { _id : 0, host : "shard2_1:27018" }
+      { _id : 0, host : "shard2_1:27018" },
+      { _id : 1, host : "shard2_2:27018" },	  
+      { _id : 2, host : "shard2_3:27018" }
     ]
   }
 );
@@ -53,8 +57,8 @@ EOF
 
 docker exec -it mongos_router_1 mongosh --port 27017 <<EOF
  
-sh.addShard( "shard1/shard1_1:27018");
-sh.addShard( "shard2/shard2_1:27018");
+sh.addShard( "shard1/shard1_1:27018,shard1_2:27018,shard1_3:27018");
+sh.addShard( "shard2/shard2_1:27018,shard2_2:27018,shard2_3:27018");
 
 sh.enableSharding("somedb");
 sh.shardCollection("somedb.helloDoc", { "name" : "hashed" } );

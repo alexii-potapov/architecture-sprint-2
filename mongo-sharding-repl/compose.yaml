@@ -1,4 +1,4 @@
-name: mongo-sharding
+name: mongo-sharding-repl
 services:
   configSrv:
     image: mongo:latest
@@ -40,6 +40,46 @@ services:
       interval: 5s
       start_period: 10s
 
+  shard1_2:
+    image: mongo:latest
+    container_name: shard1_2
+    restart: always
+    ports:
+      - "27128:27018"
+    volumes:
+      - shard1_2-data:/data/db
+    command:
+      [
+        "--shardsvr",
+        "--replSet",
+        "shard1",
+        "--bind_ip_all"
+      ]
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      start_period: 10s
+
+  shard1_3:
+    image: mongo:latest
+    container_name: shard1_3
+    restart: always
+    ports:
+      - "27138:27018"
+    volumes:
+      - shard1_3-data:/data/db
+    command:
+      [
+        "--shardsvr",
+        "--replSet",
+        "shard1",
+        "--bind_ip_all"
+      ]
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      start_period: 10s
+
   shard2_1:
     image: mongo:latest
     container_name: shard2_1
@@ -48,6 +88,46 @@ services:
       - "27218:27018"
     volumes:
       - shard2_1-data:/data/db
+    command:
+      [
+        "--shardsvr",
+        "--replSet",
+        "shard2",
+        "--bind_ip_all"
+      ]
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      start_period: 10s
+
+  shard2_2:
+    image: mongo:latest
+    container_name: shard2_2
+    restart: always
+    ports:
+      - "27228:27018"
+    volumes:
+      - shard2_2-data:/data/db
+    command:
+      [
+        "--shardsvr",
+        "--replSet",
+        "shard2",
+        "--bind_ip_all"
+      ]
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      start_period: 10s
+
+  shard2_3:
+    image: mongo:latest
+    container_name: shard2_3
+    restart: always
+    ports:
+      - "27238:27018"
+    volumes:
+      - shard2_3-data:/data/db
     command:
       [
         "--shardsvr",
@@ -111,7 +191,11 @@ services:
       - mongos_router_1
       - mongos_router_2
       - shard1_1
+      - shard1_2
+      - shard1_3
       - shard2_1
+      - shard2_2
+      - shard2_3
     ports:
       - 8080:8080
     environment:
@@ -121,4 +205,8 @@ services:
 volumes:
   configSrv-data:
   shard1_1-data:
+  shard1_2-data:
+  shard1_3-data:
   shard2_1-data:
+  shard2_2-data:
+  shard2_3-data:
